@@ -10,7 +10,7 @@ class EmployeeController extends Controller
 {
     //
     public function getEmployees(Request $request){
-        $id = $request ->id;
+        $id = $request->id;
 
         // Si se envió un id
         if($id){
@@ -37,14 +37,25 @@ class EmployeeController extends Controller
     }
 
     public function createEmployee(Request $request){
-        // Obtener datos del frontend 
-        // $data = $request->all();
+        // Obtener datos del frontend con validaciones
         $validator = Validator::make($request->all(),[
-            'name' => 'required|max:255',
-            'job' => 'required|max:255',
-            
+            'name' => 'required|string|max:255',
+            'birthdate' => 'date|before:today',
+            'sex' => 'in:male,female,other',
+            'city' => 'string|max:255',
+            'job' => 'required|string|max:255',
+            'salary' => 'numeric|min:0',
+            'number' => 'string|regex:/^\+?[0-9]{10,15}$/',
+            'email' => 'unique:employees|max:255'
         ]);
 
+        if ($validator->fails()){
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $data = $request->all();
         $employee = Employee::create([
             'name' => $data['name'],
             'birthdate' => $data['birthdate'],
@@ -64,7 +75,25 @@ class EmployeeController extends Controller
     }
 
     public function modifyEmployee(Request $request){
-        // Obtener datos del frontend 
+        // Obtener datos del frontend con validaciones
+        $validator = Validator::make($request->all(),[
+            'id' => 'required',
+            'name' => 'required|string|max:255',
+            'birthdate' => 'date|before:today',
+            'sex' => 'in:male,female,other',
+            'city' => 'string|max:255',
+            'job' => 'required|string|max:255',
+            'salary' => 'numeric|min:0',
+            'number' => 'string|regex:/^\+?[0-9]{10,15}$/',
+            'email' => 'max:255|unique:employees,email,'.$request->id,
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $data = $request->all();
 
         // Buscar empleado
@@ -83,7 +112,8 @@ class EmployeeController extends Controller
             $employee->save();
 
             return response()->json([
-                'message' => 'Empleado actualizado correctamente'
+                'message' => 'Empleado actualizado correctamente',
+                'employee' => $employee
             ]);
         }
 
