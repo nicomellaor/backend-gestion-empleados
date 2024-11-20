@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -37,7 +38,12 @@ class EmployeeController extends Controller
 
     public function createEmployee(Request $request){
         // Obtener datos del frontend 
-        $data = $request->all();
+        // $data = $request->all();
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|max:255',
+            'job' => 'required|max:255',
+            
+        ]);
 
         $employee = Employee::create([
             'name' => $data['name'],
