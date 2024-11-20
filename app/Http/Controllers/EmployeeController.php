@@ -64,11 +64,46 @@ class EmployeeController extends Controller
         // Buscar empleado
         $employee = Employee::find($data['id']);
         if($employee){
-            //$employee -> update()
+            $employee->name = $data['name'];
+            $employee->birthdate = $data['birthdate'];
+            $employee->sex = $data['sex'];
+            $employee->city = $data['city'];
+            $employee->job = $data['job'];
+            $employee->salary = $data['salary'];
+            $employee->number = $data['number'];
+            $employee->photo = $data['photo'];
+            $employee->email = $data['email'];
+
+            $employee->save();
+
+            return response()->json([
+                'message' => 'Empleado actualizado correctamente'
+            ]);
+        }
+
+        else{
+            return response()->json([
+                'message' => 'Empleado no encontrado'
+            ]);
         }
     }
 
-    public function deleteEmployee(){
-        
+    public function deleteEmployee(Request $request){
+        $id = $request->id;
+        $employee = Employee::find($id);
+
+        if($employee){
+            $employee->delete();
+
+            return response()->json([
+                'message' => 'Empleado eliminado exitosamente'
+            ]);
+        }
+
+        else{
+            return response()->json([
+                'message' => 'Empleado no encontrado'
+            ]);
+        }
     }
 }
