@@ -78,14 +78,14 @@ class EmployeeController extends Controller
         // Obtener datos del frontend con validaciones
         $validator = Validator::make($request->all(),[
             'id' => 'required',
-            'name' => 'required|string|max:255',
-            'birthdate' => 'date|before:today',
-            'sex' => 'in:male,female,other',
-            'city' => 'string|max:255',
-            'job' => 'required|string|max:255',
-            'salary' => 'numeric|min:0',
-            'number' => 'string|regex:/^\+?[0-9]{10,15}$/',
-            'email' => 'max:255|unique:employees,email,'.$request->id,
+            'name' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date|before:today',
+            'sex' => 'nullable|in:male,female,other',
+            'city' => 'nullable|string|max:255',
+            'job' => 'nullable|string|max:255',
+            'salary' => 'nullable|numeric|min:0',
+            'number' => 'nullable|string|regex:/^\+?[0-9]{10,15}$/',
+            'email' => 'nullable|max:255|unique:employees,email,'.$request->id,
         ]);
 
         if ($validator->fails()){
@@ -96,20 +96,14 @@ class EmployeeController extends Controller
 
         $data = $request->all();
 
+        $data = array_filter($data, function($value){
+            return !empty($value);
+        });
+        
         // Buscar empleado
         $employee = Employee::find($data['id']);
         if($employee){
-            $employee->name = $data['name'];
-            $employee->birthdate = $data['birthdate'];
-            $employee->sex = $data['sex'];
-            $employee->city = $data['city'];
-            $employee->job = $data['job'];
-            $employee->salary = $data['salary'];
-            $employee->number = $data['number'];
-            $employee->photo = $data['photo'];
-            $employee->email = $data['email'];
-
-            $employee->save();
+            $employee->update($data);
 
             return response()->json([
                 'message' => 'Empleado actualizado correctamente',
