@@ -1,9 +1,8 @@
-# Backend Gestión de Empleados
+# Backend Gestión de Empleados (Employee Management)
+Backend created with **Laravel** for the Employee Management application (Software de Gestión de Empleados).
 
-Backend creado con Laravel para la aplicación de Gestión de Empleados.
-
-## Link web
+## URL
 - https://nicomellaor.github.io/gestion-empleados/
 
-## Link del Frontend
+## Frontend Repository
 - https://github.com/nicomellaor/gestion-empleados
